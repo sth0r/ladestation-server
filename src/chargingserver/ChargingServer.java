@@ -37,6 +37,8 @@ package chargingserver;
         String pass = input.substring(10, 17);
         //Check against database
         //respond to charger
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
     }
 
     private void chargecharge(String input) {
