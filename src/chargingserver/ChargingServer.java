@@ -15,7 +15,7 @@ String input = "$001L375ABK0Argentina*";
         if (input.startsWith("*")){
             dummy=input.substring(5, 5);
             switch (dummy){
-                case "L" :  
+                case "L" :  ;//Undervejs
             }
                     
         }
