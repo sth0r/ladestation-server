@@ -8,24 +8,38 @@ package chargingserver;
  *
  * @author Alex
  */
-public class ChargingServer {
-String input = "$001L375ABK0Argentina*";
-    void methode(String input){
-        String dummy;
-        if (input.startsWith("*")){
-            dummy=input.substring(5, 5);
-            switch (dummy){
-                case "L" :  ;//Undervejs
-            }
-                    
-        }
-    }
-    
+
+
+ public class ChargingServer {
+    String input = "$001USERNR12345678*";
     
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
+    }
+
+    void methode(String input){
+        String dummy;
+        if (input.startsWith("*")){
+            dummy=input.substring(5, 5);
+            switch (dummy){
+                case "L" :  passcontrol(input); break;
+                case "C" :  chargecharge(input); break;
+            }
+                    
+        }
+    }
+
+    private void passcontrol(String input) {
+        String user = input.substring(5, 9);
+        String pass = input.substring(10, 17);
+        //Check against database
+        //respond to charger
+    }
+
+    private void chargecharge(String input) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

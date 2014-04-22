@@ -1,8 +1,0 @@
-diff a/src/chargingserver/ChargingServer.java b/src/chargingserver/ChargingServer.java	(rejected hunks)
-@@ -15,7 +15,6 @@
-         if (input.startsWith("*")){
-             dummy=input.substring(5, 5);
-             switch (dummy){
-                 case "L" :  ;//Undervejs
-             }
-                     
