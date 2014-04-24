@@ -4,9 +4,6 @@
  */
 package chargingserver;
 import ihk.ibr.serial.*;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.TooManyListenersException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,20 +14,19 @@ import java.util.logging.Logger;
  */
 
 
- public class ChargingServer implements FrameEventListener, PropertyChangeListener{
-    String input = "$001USERNR12345678*";
+ public class ChargingServer {
     Transceiver tranciever;
 
     public ChargingServer() {
         try {
-            this.tranciever = new Transceiver("COM3");
+            this.tranciever = new Transceiver("COM3",this);
         } catch (TooManyListenersException ex) {
             Logger.getLogger(ChargingServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void propertyChange(PropertyChangeEvent evt) {
-        String input = ((String) evt.getNewValue());
+    public void Datareceived() {
+        String input = tranciever.getReceivedData();
         commandInterp(input);
     }
     
@@ -80,7 +76,7 @@ import java.util.logging.Logger;
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void pricequery(String input1) {
+    private void pricequery(String input) {
         String client = input.substring(2, 4);
         pricePack(client);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -118,10 +114,5 @@ import java.util.logging.Logger;
         //get prisdata from database
         String pack='*'+client+hrData+minData+secData;
         tranciever.transmit(pack);
-    }
-
-    @Override
-    public void frameReady(FrameEvent be) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

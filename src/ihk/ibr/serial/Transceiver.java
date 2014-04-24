@@ -1,5 +1,6 @@
 package ihk.ibr.serial;
 
+import chargingserver.ChargingServer;
 import java.util.*;
 
 /**
@@ -16,9 +17,11 @@ public class Transceiver implements FrameEventListener {
 
     private SerialFrame serialFrame;
     private String receivedData = "";
+    ChargingServer server;
 
-    public Transceiver(String port) throws TooManyListenersException {
+    public Transceiver(String port, ChargingServer server) throws TooManyListenersException {
         openPort(port);
+        this.server=server;
     }
 
     /**
@@ -59,6 +62,7 @@ public class Transceiver implements FrameEventListener {
      */
     public void frameReady(FrameEvent be) {
         receivedData = be.getData();
+        server.Datareceived();
     }
 
     /**
