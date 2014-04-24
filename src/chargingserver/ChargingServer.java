@@ -4,6 +4,9 @@
  */
 package chargingserver;
 import ihk.ibr.serial.*;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.TooManyListenersException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,15 +17,9 @@ import java.util.logging.Logger;
  */
 
 
- public class ChargingServer {
+ public class ChargingServer implements FrameEventListener, PropertyChangeListener{
     String input = "$001USERNR12345678*";
     Transceiver tranciever;
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
 
     public ChargingServer() {
         try {
@@ -32,8 +29,13 @@ import java.util.logging.Logger;
         }
     }
 
+    public void propertyChange(PropertyChangeEvent evt) {
+        String input = ((String) evt.getNewValue());
+        commandInterp(input);
+    }
+    
     void commandInterp(String input){
-        if (input.startsWith("*")){
+        if (input.startsWith("$") && input.endsWith("*")){
             String command = input.substring(5, 5);
             switch (command){
                 case "L" :  passcontrol(input); break;
@@ -53,6 +55,7 @@ import java.util.logging.Logger;
         String user = input.substring(5, 9);
         String pass = input.substring(10, 16);
         boolean result = false;                 //result = Control if password matches pass string
+        
         loginReturnPack(client,taID,user,result);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -89,6 +92,12 @@ import java.util.logging.Logger;
         }
     }
     
+    private void priceBroadcast(int clientcount){
+        for (int i=1; i<=clientcount; i++){
+            pricePack(String.format("%03d", i));
+        }
+    }
+    
     private void loginReturnPack(String client, String taID, String user, boolean result) {
         String pack='$'+client+taID+user+result;
         tranciever.transmit(pack);
@@ -109,5 +118,10 @@ import java.util.logging.Logger;
         //get prisdata from database
         String pack='*'+client+hrData+minData+secData;
         tranciever.transmit(pack);
+    }
+
+    @Override
+    public void frameReady(FrameEvent be) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

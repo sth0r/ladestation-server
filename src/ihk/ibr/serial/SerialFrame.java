@@ -21,8 +21,7 @@ public class SerialFrame
     private InputStream inputStream;
     private OutputStream outputStream;
     private String frame;
-    private final char STOP_CHAR1 = '\r';
-    private final char STOP_CHAR2 = '\n';
+    private final char STOP_CHAR1 = '*';
     private final int BAUDRATE = 19200;
 
     /**
@@ -100,7 +99,7 @@ public class SerialFrame
     public void serialEvent(SerialPortEvent event) {
         switch (event.getEventType()) {
             case SerialPortEvent.DATA_AVAILABLE:
-                byte[] readBuffer = new byte[20];
+                byte[] readBuffer = new byte[50];
                 int numBytes = 0;
                 int size = 0;
                 try {
@@ -111,7 +110,7 @@ public class SerialFrame
                     }
                     char previousChar = '\u0000'; //initialize previous char
                     for (int i = 0; i < frame.length(); i++) {
-                        if ((frame.charAt(i) == STOP_CHAR2) && (previousChar == STOP_CHAR1)) {
+                        if ((frame.charAt(i) == STOP_CHAR1)) {
                             frame = frame.substring(0, size - 1);
                             String temp = frame;
                             frame = "";
@@ -140,7 +139,7 @@ public class SerialFrame
      * @param str The string to be sent.
      */
     public void sendFrame(String str) {
-        str = str + STOP_CHAR1 + STOP_CHAR2;
+        str = str + STOP_CHAR1;
         try {
             outputStream = serialPort.getOutputStream();
             outputStream.write(str.getBytes());
