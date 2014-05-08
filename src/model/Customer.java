@@ -21,7 +21,7 @@ public class Customer
     private String password = "1234";
     //private String tempPassword; // Nice to have
 
-    public Customer(String uID, String firstName, String lastName, String balance, String creditLimit, String email, String tlf, String password)
+    public Customer(String uID, String firstName, String lastName, String balance, String creditLimit, String email, String tlf)
     {
         this.uID = uID;
         this.firstName = firstName;
@@ -30,7 +30,6 @@ public class Customer
         this.creditLimit = creditLimit;
         this.email = email;
         this.tlf = tlf;
-        this.password = password;
     }
 
     /**

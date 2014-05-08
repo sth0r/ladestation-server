@@ -4,9 +4,7 @@
  */
 package DAO;
 
-import model.ChargingStat;
-import model.Customer;
-import model.ResultSetTableModel;
+import model.*;
 /**
  *
  * @author ibr
@@ -16,17 +14,18 @@ public interface ChargingDAO
     // From GUI
     public Customer findByUID(String uID);
     public ChargingStat findByTAID(String taID);
-    public Customer findByFirstName(String uID);
-    public Customer findByLastName(String uID);
-    public Customer findByBalance(String uID);
-    public Customer findByCreditLimit(String uID);
-    public Customer findByEmail(String uID);
-    public Customer findByTlf(String uID);
+    public Customer findByFirstName(String firstName);
+    public void findByFirstNameTEST(String firstName, ResultSetTableModel receiver) throws java.sql.SQLException;
+    public Customer findByLastName(String lastName);
+    public Customer findByBalance(String balance);
+    public Customer findByCreditLimit(String creditLimit);
+    public Customer findByEmail(String email);
+    public Customer findByTlf(String tlf);
     public void select(ResultSetTableModel receiver) throws java.sql.SQLException;
     public void update(ResultSetTableModel receiver) throws java.sql.SQLException;
     public void insert(ResultSetTableModel receiver) throws java.sql.SQLException;
     public void delete(ResultSetTableModel receiver) throws java.sql.SQLException;
-                   
+    public Price priceRequestDB(); // Returns a priceModel from database              
     // From Charger to Server
     public String login(String costumerID); // Return password
     public void chargeEvent(int taID, String costumerID, String stopTimeStamp, ResultSetTableModel receiver) throws java.sql.SQLException;

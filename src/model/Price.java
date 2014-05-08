@@ -10,14 +10,18 @@ package model;
  */
 public class Price
 {
-    static double price = 0.47;
-            
-    public static double getPrice()
+    double price = 0.42;
+    
+    public Price(double price)
+    {
+        this.price = price;
+    }
+    public double getPrice()
     {
         return price;
     }
 
-    public static void setPrice(double newPrice)
+    public void setPrice(double newPrice)
     {
         price = newPrice;
     }
