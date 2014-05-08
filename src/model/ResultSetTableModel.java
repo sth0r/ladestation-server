@@ -22,6 +22,7 @@ public class ResultSetTableModel extends AbstractTableModel
     private RowSet cachedRowSet;
     private ResultSetMetaData resultSetMetaData;
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
         try
@@ -75,6 +76,7 @@ public class ResultSetTableModel extends AbstractTableModel
         return Object.class;
     }
 
+    @Override
     public int getRowCount()
     {
         try
@@ -92,6 +94,7 @@ public class ResultSetTableModel extends AbstractTableModel
         return 0;
     }
 
+    @Override
     public int getColumnCount()
     {
         try

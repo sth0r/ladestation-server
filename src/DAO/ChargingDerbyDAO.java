@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import model.Customer;
 import model.ResultSetTableModel;
+import model.*;
 import com.sun.rowset.CachedRowSetImpl;
 
 
@@ -35,7 +36,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
             {
-                Customer user = createUser(resultSet);
+                Customer user = createCostumer(resultSet);
                 return user;
             }
         } catch (SQLException e)
@@ -44,6 +45,28 @@ public class ChargingDerbyDAO implements ChargingDAO
         return null;
     }
 
+    @Override
+    public ChargingStat findByTAID(String taID)
+    {
+        String titlesQuery = "select distinct \"TAID\", \"started\", \"stopped\", \"daration\""
+                + "from \"CHARGINGSTATS\" "
+                + "where \"TAID\" = ?";
+
+        try (Connection con = DerbyDAOFactory.createConnection();
+                PreparedStatement preparedStatement = con.prepareStatement(titlesQuery);)
+        {
+            preparedStatement.setString(1, taID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next())
+            {
+                ChargingStat stats = createStats(resultSet);
+                return stats;
+            }
+        } catch (SQLException e)
+        {
+        }
+        return null;
+    }
     @Override
     public Customer findByFirstName(String firstName)
     {
@@ -59,7 +82,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
             {
-                Customer user = createUser(resultSet);
+                Customer user = createCostumer(resultSet);
                 return user;
             }
         } catch (SQLException e)
@@ -83,7 +106,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
             {
-                Customer user = createUser(resultSet);
+                Customer user = createCostumer(resultSet);
                 return user;
             }
         } catch (SQLException e)
@@ -107,7 +130,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
             {
-                Customer user = createUser(resultSet);
+                Customer user = createCostumer(resultSet);
                 return user;
             }
         } catch (SQLException e)
@@ -131,7 +154,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
             {
-                Customer user = createUser(resultSet);
+                Customer user = createCostumer(resultSet);
                 return user;
             }
         } catch (SQLException e)
@@ -155,7 +178,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
             {
-                Customer user = createUser(resultSet);
+                Customer user = createCostumer(resultSet);
                 return user;
             }
         } catch (SQLException e)
@@ -178,7 +201,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next())
             {
-                Customer user = createUser(resultSet);
+                Customer user = createCostumer(resultSet);
                 return user;
             }
         } 
@@ -244,36 +267,63 @@ public class ChargingDerbyDAO implements ChargingDAO
     @Override
     public String login(String costumerID) // Find the password that matches the costumerID and return it
     {
-        
+        return findByUID(costumerID).getPassword();
     }
 
     @Override
-    public void chargeEvent(int TAID, String costumerID, String timeStamp)
+    public void chargeEvent(int taID, String costumerID, String stopTimeStamp, ResultSetTableModel receiver) throws java.sql.SQLException
     {
-        
+        String sQLCommand = "INSERT INTO CHARGINGSTATS (TAID, stopped, UID) VALUES ("+taID+",'" +costumerID+"','" +stopTimeStamp+"')";
+        try (Connection con = DerbyDAOFactory.createConnection();
+            PreparedStatement stmt = con.prepareStatement(sQLCommand, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
+        {
+            ResultSet resultSet = stmt.executeQuery();
+            CachedRowSetImpl cachedRowSet = new CachedRowSetImpl();
+            cachedRowSet.populate(resultSet);
+            con.close();
+            receiver.setRowSet(cachedRowSet);
+        }
     }
 
     @Override
-    public double priceRequest()
+    public double priceRequest() throws java.sql.SQLException
     {
-       
+        try (Connection con = DerbyDAOFactory.createConnection();
+            PreparedStatement stmt = con.prepareStatement("SELECT Price FROM PRICESES ", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
+        {
+            ResultSet resultSet = stmt.executeQuery();
+            CachedRowSetImpl cachedRowSet = new CachedRowSetImpl();
+            cachedRowSet.populate(resultSet);
+            con.close();
+            receiver.setRowSet(cachedRowSet);
+        }
+       return Price.getPrice();
     }
     
     @Override
     public double balanceRequest(String costumerID)
     {
-        
+        return Double.parseDouble(findByUID(costumerID).getBalance());
     }
     
     // From Server to Charger
 
     @Override
-    public void newTAID(int TAID, String startTimeStamp)
+    public void newTAID(int taID, String startTimeStamp, ResultSetTableModel receiver) throws java.sql.SQLException
     {
-        
+        String sQLCommand = "INSERT INTO CHARGINGSTATS (TAID, started) VALUES ("+ taID +",'" +startTimeStamp+"')";
+        try (Connection con = DerbyDAOFactory.createConnection();
+            PreparedStatement stmt = con.prepareStatement(sQLCommand, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
+        {
+            ResultSet resultSet = stmt.executeQuery();
+            CachedRowSetImpl cachedRowSet = new CachedRowSetImpl();
+            cachedRowSet.populate(resultSet);
+            con.close();
+            receiver.setRowSet(cachedRowSet);
+        }
     }
     
-    private Customer createUser(ResultSet resultSet) throws SQLException
+    private Customer createCostumer(ResultSet resultSet) throws SQLException
     {
         String uID = resultSet.getString("uID");
         String firstName = resultSet.getString("firstName");
@@ -282,6 +332,27 @@ public class ChargingDerbyDAO implements ChargingDAO
         String creditLimit = resultSet.getString("creditLimit");
         String email = resultSet.getString("email");
         String tlf = resultSet.getString("tlf");
-        return new Customer(uID, firstName, lastName, balance, creditLimit, email, tlf);
+        String password = resultSet.getString("password");
+        return new Customer(uID, firstName, lastName, balance, creditLimit, email, tlf, password);
+    }
+    
+    private ChargingStat createStats(ResultSet resultSet) throws SQLException
+    {
+        String taID = resultSet.getString("TAID");
+        String started = resultSet.getString("started");
+        String stopped = resultSet.getString("stopped");
+        String duration = resultSet.getString("duration");
+        String uID = resultSet.getString("UID");
+        return new ChargingStat(taID, started, stopped, duration, uID);
+    }
+    
+    private Price createStats(ResultSet resultSet) throws SQLException
+    {
+        String taID = resultSet.getString("TAID");
+        String started = resultSet.getString("started");
+        String stopped = resultSet.getString("stopped");
+        String duration = resultSet.getString("duration");
+        String uID = resultSet.getString("UID");
+        return new ChargingStat(taID, started, stopped, duration, uID);
     }
 }

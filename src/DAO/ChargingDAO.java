@@ -4,6 +4,7 @@
  */
 package DAO;
 
+import model.ChargingStat;
 import model.Customer;
 import model.ResultSetTableModel;
 /**
@@ -14,6 +15,7 @@ public interface ChargingDAO
 {
     // From GUI
     public Customer findByUID(String uID);
+    public ChargingStat findByTAID(String taID);
     public Customer findByFirstName(String uID);
     public Customer findByLastName(String uID);
     public Customer findByBalance(String uID);
@@ -27,9 +29,9 @@ public interface ChargingDAO
                    
     // From Charger to Server
     public String login(String costumerID); // Return password
-    public void chargeEvent(int TAID, String costumerID, String stopTimeStamp); 
+    public void chargeEvent(int taID, String costumerID, String stopTimeStamp, ResultSetTableModel receiver) throws java.sql.SQLException;
     public double priceRequest(); // Return price
     public double balanceRequest(String costumerID); // Return balance
     // From Server to Charger
-    public void newTAID(int TAID, String startTimeStamp);
+    public void newTAID(int taID, String startTimeStamp, ResultSetTableModel receiver) throws java.sql.SQLException; // Save taID and startTime
 }

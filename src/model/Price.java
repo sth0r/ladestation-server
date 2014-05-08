@@ -10,20 +10,15 @@ package model;
  */
 public class Price
 {
-    private double price;  
-    
-    public double getPrice()
+    static double price = 0.47;
+            
+    public static double getPrice()
     {
         return price;
     }
 
-    /**
-     * Set the value of email
-     *
-     * @param email new value of email
-     */
-    public void setPrice(double price)
+    public static void setPrice(double newPrice)
     {
-        this.price = price;
+        price = newPrice;
     }
 }
