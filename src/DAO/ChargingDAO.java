@@ -21,11 +21,16 @@ public interface ChargingDAO
     public Customer findByCreditLimit(String creditLimit);
     public Customer findByEmail(String email);
     public Customer findByTlf(String tlf);
+    public void addCustomerToDB(Customer customer);
+    public void deleteCustomerFromDB(String uID);
+    public void getCustomersTableFromDB(ResultSetTableModel receiver) throws java.sql.SQLException;
+    public void getChargingstatsTableFromDB(ResultSetTableModel receiver) throws java.sql.SQLException;
+    public Price priceRequestDB(); // Returns a priceModel from database
+    
     public void select(ResultSetTableModel receiver) throws java.sql.SQLException;
     public void update(ResultSetTableModel receiver) throws java.sql.SQLException;
     public void insert(ResultSetTableModel receiver) throws java.sql.SQLException;
-    public void delete(ResultSetTableModel receiver) throws java.sql.SQLException;
-    public Price priceRequestDB(); // Returns a priceModel from database              
+    public void delete(ResultSetTableModel receiver) throws java.sql.SQLException;                
     // From Charger to Server
     public String login(String costumerID); // Return password
     public void chargeEvent(int taID, String costumerID, String stopTimeStamp, ResultSetTableModel receiver) throws java.sql.SQLException;

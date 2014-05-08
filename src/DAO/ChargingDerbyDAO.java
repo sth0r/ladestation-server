@@ -229,6 +229,26 @@ public class ChargingDerbyDAO implements ChargingDAO
         return null;
     }
     @Override
+    public void addCustomerToDB(Customer customer)
+    {
+        
+    }
+    @Override
+    public void deleteCustomerFromDB(String uID)
+    {
+        
+    }
+    @Override
+    public void getCustomersTableFromDB(ResultSetTableModel receiver) throws java.sql.SQLException
+    {
+        
+    }
+    @Override
+    public void getChargingstatsTableFromDB(ResultSetTableModel receiver) throws java.sql.SQLException
+    {
+        
+    }
+    @Override
     public void select(ResultSetTableModel receiver) throws java.sql.SQLException
     {
         try (Connection con = DerbyDAOFactory.createConnection();
