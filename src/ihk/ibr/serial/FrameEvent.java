@@ -18,6 +18,7 @@ public class FrameEvent
   public FrameEvent(Object o, String data) {
     super(o);
     dataString = data;
+    //System.out.println("FE21. Data recieved: "+dataString);
   }
 
   /**

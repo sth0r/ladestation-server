@@ -24,10 +24,10 @@ public class ChargingDerbyDAO implements ChargingDAO
     @Override
     public Customer findByUID(String uID)
     {
-        String titlesQuery = "select distinct \"uID\", \"firstName\",  "
-                + "\"lastName\", \"balance\", \"creditLimit\", \"email\", \"tlf\""
-                + "from \"Customers\" "
-                + "where \"uID\" = ?";
+        String titlesQuery = "select distinct \"UID\", \"firstName\",  "
+                + "\"lastName\", \"balance\", \"creditLimit\", \"email\", \"tlf\", \"password\""
+                + "from \"CUSTOMERS\" "
+                + "where \"UID\" = ?";
 
         try (Connection con = DerbyDAOFactory.createConnection();
                 PreparedStatement preparedStatement = con.prepareStatement(titlesQuery);)
@@ -41,6 +41,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             }
         } catch (SQLException e)
         {
+            System.out.println("SQLException: " + e.getMessage());
         }
         return null;
     }
@@ -70,9 +71,9 @@ public class ChargingDerbyDAO implements ChargingDAO
     @Override
     public Customer findByFirstName(String firstName)
     {
-        String titlesQuery = "select distinct \"uID\", \"firstName\",  "
+        String titlesQuery = "select distinct \"UID\", \"firstName\",  "
                 + "\"lastName\", \"balance\", \"creditLimit\", \"email\", \"tlf\""
-                + "from \"Customers\" "
+                + "from \"CUSTOMERS\" "
                 + "where \"firstName\" = ?";
 
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -94,7 +95,7 @@ public class ChargingDerbyDAO implements ChargingDAO
     public void findByFirstNameTEST(String firstName, ResultSetTableModel receiver) throws java.sql.SQLException
     {
         String titlesQuery = "select *"
-                + "from \"Customers\" "
+                + "from \"CUSTOMERS\" "
                 + "where \"firstName\" = ?";
 
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -112,9 +113,9 @@ public class ChargingDerbyDAO implements ChargingDAO
     @Override
     public Customer findByLastName(String lastName)
     {
-        String titlesQuery = "select distinct \"uID\", \"firstName\",  "
+        String titlesQuery = "select distinct \"UID\", \"firstName\",  "
                 + "\"lastName\", \"balance\", \"creditLimit\", \"email\", \"tlf\""
-                + "from \"Customers\" "
+                + "from \"CUSTOMERS\" "
                 + "where \"lastName\" = ?";
 
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -136,9 +137,9 @@ public class ChargingDerbyDAO implements ChargingDAO
     @Override
     public Customer findByBalance(String balance)
     {
-        String titlesQuery = "select distinct \"uID\", \"firstName\",  "
+        String titlesQuery = "select distinct \"UID\", \"firstName\",  "
                 + "\"lastName\", \"balance\", \"creditLimit\", \"email\", \"tlf\""
-                + "from \"Customers\" "
+                + "from \"CUSTOMERS\" "
                 + "where \"balance\" = ?";
 
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -160,9 +161,9 @@ public class ChargingDerbyDAO implements ChargingDAO
     @Override
     public Customer findByCreditLimit(String creditLimit)
     {
-        String titlesQuery = "select distinct \"uID\", \"firstName\",  "
+        String titlesQuery = "select distinct \"UID\", \"firstName\",  "
                 + "\"lastName\", \"balance\", \"creditLimit\", \"email\", \"tlf\""
-                + "from \"Customers\" "
+                + "from \"CUSTOMERS\" "
                 + "where \"creditLimit\" = ?";
 
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -184,9 +185,9 @@ public class ChargingDerbyDAO implements ChargingDAO
     @Override
     public Customer findByEmail(String email)
     {
-        String titlesQuery = "select distinct \"uID\", \"firstName\",  "
+        String titlesQuery = "select distinct \"UID\", \"firstName\",  "
                 + "\"lastName\", \"balance\", \"creditLimit\", \"email\", \"tlf\""
-                + "from \"Customers\" "
+                + "from \"CUSTOMERS\" "
                 + "where \"email\" = ?";
 
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -208,9 +209,9 @@ public class ChargingDerbyDAO implements ChargingDAO
     @Override
     public Customer findByTlf(String tlf)
     {
-        String titlesQuery = "select distinct \"uID\", \"firstName\",  "
+        String titlesQuery = "select distinct \"UID\", \"firstName\",  "
                 + "\"lastName\", \"balance\", \"creditLimit\", \"email\", \"tlf\""
-                + "from \"Customers\" "
+                + "from \"CUSTOMERS\" "
                 + "where \"tlf\" = ?";
         try (Connection con = DerbyDAOFactory.createConnection();
             PreparedStatement preparedStatement = con.prepareStatement(titlesQuery);)
@@ -331,7 +332,7 @@ public class ChargingDerbyDAO implements ChargingDAO
     public Price priceRequestDB()
     {
         try (Connection con = DerbyDAOFactory.createConnection();
-            PreparedStatement stmt = con.prepareStatement("SELECT Price FROM PRICESES ", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
+            PreparedStatement stmt = con.prepareStatement("SELECT Price FROM PRICESES", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
         {
             ResultSet resultSet = stmt.executeQuery();
             Price price = createPriceModel(resultSet);
@@ -373,14 +374,15 @@ public class ChargingDerbyDAO implements ChargingDAO
     
     private Customer createCostumerModel(ResultSet resultSet) throws SQLException
     {
-        String uID = resultSet.getString("uID");
+        String uID = resultSet.getString("UID");
         String firstName = resultSet.getString("firstName");
         String lastName = resultSet.getString("lastName");
         String balance = resultSet.getString("balance");
         String creditLimit = resultSet.getString("creditLimit");
         String email = resultSet.getString("email");
         String tlf = resultSet.getString("tlf");
-        return new Customer(uID, firstName, lastName, balance, creditLimit, email, tlf);
+        String password = resultSet.getString("password");
+        return new Customer(uID, firstName, lastName, balance, creditLimit, email, tlf, password);
     }
     
     private ChargingStat createChargingStatsModel(ResultSet resultSet) throws SQLException
@@ -395,7 +397,7 @@ public class ChargingDerbyDAO implements ChargingDAO
     
     private Price createPriceModel(ResultSet resultSet) throws SQLException
     {
-        double price = Double.parseDouble(resultSet.getString("Price")) ;
+        double price = resultSet.getDouble("Price");
         return new Price(price);
     }
 }

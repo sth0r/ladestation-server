@@ -70,6 +70,7 @@ public class Transceiver implements FrameEventListener {
      * @return String - The data received at the serial port.
      */
     public String getReceivedData() {
+            //System.out.print(receivedData);
         return receivedData;
     }
 }

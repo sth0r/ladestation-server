@@ -12,7 +12,8 @@ import gnu.io.*;
  * @version 13-03-2013.
  */
 public class SerialFrame
-        implements SerialPortEventListener {
+        implements SerialPortEventListener
+{
 
     private FrameEventListener frameEventListener;
     private Enumeration portList;
@@ -23,6 +24,7 @@ public class SerialFrame
     private String frame;
     private final char STOP_CHAR1 = '*';
     private final int BAUDRATE = 19200;
+    private final char START_CHAR = '%';
 
     /**
      * Constructs a new SerialFrame instance and opens the port given in the
@@ -31,14 +33,19 @@ public class SerialFrame
      * @param port The port to use for communication (COM1, COM2 etc.)
      * @throws java.util.TooManyListenersException
      */
-    public SerialFrame(String port) throws TooManyListenersException {
+    public SerialFrame(String port) throws TooManyListenersException
+    {
         portList = CommPortIdentifier.getPortIdentifiers();
         frame = "";
-        while (portList.hasMoreElements()) {
+        while (portList.hasMoreElements())
+        {
             portId = (CommPortIdentifier) portList.nextElement();
-            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                if (portId.getName().equals(port)) {
-                    try {
+            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL)
+            {
+                if (portId.getName().equals(port))
+                {
+                    try
+                    {
                         serialPort = (SerialPort) portId.open("", 500);
                         serialPort.setSerialPortParams(
                                 BAUDRATE,
@@ -48,13 +55,17 @@ public class SerialFrame
                         inputStream = serialPort.getInputStream();
                         serialPort.addEventListener(this);
                         serialPort.notifyOnDataAvailable(true);
-                    } catch (PortInUseException e) {
+                    } catch (PortInUseException e)
+                    {
                         e.printStackTrace();
-                    } catch (IOException e) {
+                    } catch (IOException e)
+                    {
                         e.printStackTrace();
-                    } catch (UnsupportedCommOperationException e) {
+                    } catch (UnsupportedCommOperationException e)
+                    {
                         e.printStackTrace();
-                    } catch (TooManyListenersException e) {
+                    } catch (TooManyListenersException e)
+                    {
                         e.printStackTrace();
                     }
                 }
@@ -65,7 +76,8 @@ public class SerialFrame
     /**
      * Close the port after transmission.
      */
-    public void closePort() {
+    public void closePort()
+    {
         serialPort.close();
     }
 
@@ -77,13 +89,17 @@ public class SerialFrame
      * @throws TooManyListenersException
      */
     public void addFrameEventListener(FrameEventListener fel) throws
-            TooManyListenersException {
-        if (fel == null) {
+            TooManyListenersException
+    {
+        if (fel == null)
+        {
             return;
         }
-        if (frameEventListener != null) {
+        if (frameEventListener != null)
+        {
             throw new TooManyListenersException("Only one listener allowed");
-        } else {
+        } else
+        {
             frameEventListener = fel;
         }
     }
@@ -96,34 +112,44 @@ public class SerialFrame
      *
      * @param event Event object.
      */
-    public void serialEvent(SerialPortEvent event) {
-        switch (event.getEventType()) {
+    public void serialEvent(SerialPortEvent event)
+    {
+        switch (event.getEventType())
+        {
             case SerialPortEvent.DATA_AVAILABLE:
                 byte[] readBuffer = new byte[50];
                 int numBytes = 0;
                 int size = 0;
-                try {
-                    while (inputStream.available() > 0) {
+                try
+                {
+                    while (inputStream.available() > 0)
+                    {
                         numBytes = inputStream.read(readBuffer);
                         String str = new String(readBuffer);
+                        System.out.println("SF138. serialEvent string: " + str);
                         frame = frame + str.substring(0, numBytes);
                     }
-                    char previousChar = '\u0000'; //initialize previous char
-                    for (int i = 0; i < frame.length(); i++) {
-                        if ((frame.charAt(i) == STOP_CHAR1)) {
-                            frame = frame.substring(0, size - 1);
+                    //char previousChar = '\u0000'; //initialize previous char
+                    for (int i = 0; i < frame.length(); i++)
+                    {
+                        if ((frame.charAt(i) == STOP_CHAR1))
+                        {
+                            frame = frame.substring(frame.indexOf(START_CHAR), size + 1);
                             String temp = frame;
                             frame = "";
-                            if (frameEventListener != null) {
+                            System.out.println("SF138. serialEvent frame: " + temp);
+                            if (frameEventListener != null)
+                            {
                                 FrameEvent frameEvent = new FrameEvent(this, temp);
                                 frameEventListener.frameReady(frameEvent);
                             }
                             break;
                         }
                         size++;
-                        previousChar = frame.charAt(i);
+                        //previousChar = frame.charAt(i);
                     }
-                } catch (IOException e) {
+                } catch (IOException e)
+                {
                     e.printStackTrace();
                 }
                 break;
@@ -138,12 +164,16 @@ public class SerialFrame
      *
      * @param str The string to be sent.
      */
-    public void sendFrame(String str) {
+    public void sendFrame(String str)
+    {
         str = str + STOP_CHAR1;
-        try {
+        try
+        {
             outputStream = serialPort.getOutputStream();
             outputStream.write(str.getBytes());
-        } catch (IOException e) {
+            System.out.println("SF172. Data send: " + str);
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
