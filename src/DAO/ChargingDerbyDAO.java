@@ -369,7 +369,7 @@ public class ChargingDerbyDAO implements ChargingDAO
     @Override
     public double balanceRequest(String costumerID)
     {
-        return Double.parseDouble(findByUID(costumerID).getBalance());
+        return findByUID(costumerID).getBalance();
     }
     
     // From Server to Charger
@@ -394,8 +394,8 @@ public class ChargingDerbyDAO implements ChargingDAO
         String uID = resultSet.getString("UID");
         String firstName = resultSet.getString("firstName");
         String lastName = resultSet.getString("lastName");
-        String balance = resultSet.getString("balance");
-        String creditLimit = resultSet.getString("creditLimit");
+        double balance = resultSet.getDouble("balance");
+        double creditLimit = resultSet.getDouble("creditLimit");
         String email = resultSet.getString("email");
         String tlf = resultSet.getString("tlf");
         String password = resultSet.getString("password");
