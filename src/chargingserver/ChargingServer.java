@@ -66,9 +66,6 @@ public class ChargingServer
                 case "Q":
                     pricequery(input);
                     break;
-                default:
-                    System.out.print(input);
-                    break;
             }
         }
     }
