@@ -6,13 +6,13 @@ DROP TABLE "PRICESES";
 CREATE TABLE "CUSTOMERS" 
 (
     "UID" varchar (20) NOT NULL,
-    "firstName" varchar (20) NOT NULL,
-    "lastName" varchar (30) NOT NULL,
-    "balance" varchar (20) NOT NULL,
-    "creditLimit" varchar (20) NOT NULL,
-    "email" varchar (30) NOT NULL,
-    "tlf" varchar (20) NOT NULL,
-    "password" varchar (20) NOT NULL,
+    "FIRSTNAME" varchar (20) NOT NULL,
+    "LASTNAME" varchar (30) NOT NULL,
+    "BALANCE" varchar (20) NOT NULL,
+    "CREDITLIMIT" varchar (20) NOT NULL,
+    "EMAIL" varchar (30) NOT NULL,
+    "TLF" varchar (20) NOT NULL,
+    "PASSWORD" varchar (20) NOT NULL,
    PRIMARY KEY ("UID")
 );
    
@@ -33,7 +33,7 @@ CREATE TABLE "PRICESES"
    PRIMARY KEY ("Price")
 );
 
-INSERT INTO "CUSTOMERS" ("UID","firstName", "lastName","balance","creditLimit","email","tlf","password")
+INSERT INTO "CUSTOMERS" ("UID","FIRSTNAME", "LASTNAME","BALANCE","CREDITLIMIT","EMAIL","TLF","PASSWORD")
 VALUES 
    ('F561A25C','Harvey','Deitel','100','1000','Harvey@car.com','18771556','12345678'),
    ('F561A212','Paul','Deitel','200','100','Paul@gmail.com','28771556','1234'), 
