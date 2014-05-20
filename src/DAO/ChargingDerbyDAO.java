@@ -314,7 +314,7 @@ public class ChargingDerbyDAO implements ChargingDAO
     }
 
     @Override
-    public void chargeEvent(String taID, String costumerID, String stopTimeStamp, double price) throws java.sql.SQLException
+    public void chargeEvent(String taID, String costumerID, String stopTimeStamp, double price)
     {
         String sQLCommand = "UPDATE CHARGINGSTATS SET stopped = "+stopTimeStamp+", UID = "+costumerID+", WHERE TAID = '"+taID+"'";
 
@@ -325,6 +325,9 @@ public class ChargingDerbyDAO implements ChargingDAO
             CachedRowSetImpl cachedRowSet = new CachedRowSetImpl();
             cachedRowSet.populate(resultSet);
             con.close();
+        }
+        catch (SQLException e){
+            System.out.print("SQL Fail!" + e.getMessage());
         }
         
         double newprice = balanceRequest(costumerID) - price; //Burde måske ikke foregå i DAO

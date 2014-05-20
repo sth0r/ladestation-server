@@ -13,15 +13,15 @@ public class Customer
     private String uID;
     private String firstName;
     private String lastName;
-    private String balance; 
-    private String creditLimit;
+    private double balance; 
+    private double creditLimit;
     private String email;   
     private String tlf;
     
     private String password = "1234";
     //private String tempPassword; // Nice to have
 
-    public Customer(String uID, String firstName, String lastName, String balance, String creditLimit, String email, String tlf, String password)
+    public Customer(String uID, String firstName, String lastName, double balance, double creditLimit, String email, String tlf, String password)
     {
         this.uID = uID;
         this.firstName = firstName;
@@ -118,22 +118,22 @@ public class Customer
      *
      * @param balance new value of firstName
      */
-    public void setBalance(String balance)
+    public void setBalance(double balance)
     {
         this.balance = balance;
     }
     
-    public String getBalance()
+    public double getBalance()
     {
         return balance;
     }
     
-    public void setCreditLimit(String creditLimit)
+    public void setCreditLimit(double creditLimit)
     {
         this.creditLimit = creditLimit;
     }
     
-    public String getCreditLimit()
+    public double getCreditLimit()
     {
         return creditLimit;
     }
@@ -183,11 +183,11 @@ public class Customer
         {
             return false;
         }
-        if ((this.balance == null) ? (other.balance != null) : !this.balance.equals(other.balance))
+        if ((this.balance == 0) ? (other.balance != 0) : !(this.balance == other.balance))
         {
             return false;
         }
-        if ((this.creditLimit == null) ? (other.creditLimit != null) : !this.creditLimit.equals(other.creditLimit))
+        if ((this.creditLimit == 0) ? (other.creditLimit != 0) : !(this.creditLimit == other.creditLimit))
         {
             return false;
         }
@@ -213,8 +213,6 @@ public class Customer
         hash = 59 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
         hash = 59 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
         hash = 59 * hash + (this.uID != null ? this.uID.hashCode() : 0);
-        hash = 59 * hash + (this.balance != null ? this.balance.hashCode() : 0);
-        hash = 59 * hash + (this.creditLimit != null ? this.creditLimit.hashCode() : 0);
         hash = 59 * hash + (this.email != null ? this.email.hashCode() : 0);
         hash = 59 * hash + (this.tlf != null ? this.tlf.hashCode() : 0);
         hash = 59 * hash + (this.password != null ? this.password.hashCode() : 0);

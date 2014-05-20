@@ -9,7 +9,10 @@ import java.util.TooManyListenersException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import DAO.*;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
+import model.Customer;
 import model.ResultSetTableModel;
 
 /**
@@ -91,8 +94,11 @@ public class ChargingServer
         ChargingDAO chargingDAO = new ChargingDerbyDAO();
         String customerPassword = chargingDAO.login(user);
         passResult = typedPassword.equals(customerPassword);
+        
+        Customer customer = chargingDAO.findByUID(client);
+        boolean creditResult = (customer.getBalance()+customer.getCreditLimit())>0;
 
-        loginReturnPack(client, taID, user, passResult);
+        loginReturnPack(client, taID, user, passResult, creditResult);
     }
 
     private void chargecharge(String input)
@@ -138,16 +144,16 @@ public class ChargingServer
         }
     }
 
-    private void loginReturnPack(String client, String taID, String user, boolean result)
+    private void loginReturnPack(String client, String taID, String user, boolean result, boolean creditResult)
     {
-        String pack = '%' + client + "A" + taID + user + result;
+        String pack = client + "A" + taID + user + result + creditResult;
         tranciever.transmit(pack);
         System.out.println("CS159. Login return pack\n" + pack);
     }
     
     private void validateUIDReturnPack(String client, boolean result)
     {
-        String pack = '%' + client + "A" + result;
+        String pack = client + "A" + result;
         tranciever.transmit(pack);
         System.out.println("CS158. Validate UID return pack\n" + pack);
     }
@@ -157,19 +163,19 @@ public class ChargingServer
         String krData = "0000";
         String øreData = "00";
         //get prisdata from database
-        double price = 0.55;//= new ChargingDerbyDAO().priceRequest(); // Gets price from database
-        String pack = '%' + client + "P" + krData + øreData;
+        double price = new ChargingDerbyDAO().priceRequest(); // Gets price from database
+        String pack = client + "P" + krData + øreData;
         tranciever.transmit(pack);
         System.out.println("CS177. Price pack\n" + pack);
     }
 
     private void clockPack(String client)
     {//"$"	"001"	"T"	Hours	Minutes	Seconds
-        String hrData = "0";
-        String minData = "0";
-        String secData = "0";
-        //get prisdata from database
-        String pack = '%' + client + hrData + minData + secData;
+        Calendar time = Calendar.getInstance();
+        String hrData = String.valueOf(time.get(Calendar.HOUR_OF_DAY));
+        String minData = String.valueOf(time.get(Calendar.MINUTE));
+        String secData = String.valueOf(time.get(Calendar.SECOND));
+        String pack = client + hrData + minData + secData;
         tranciever.transmit(pack);
     }
 }

@@ -166,7 +166,7 @@ public class SerialFrame
      */
     public void sendFrame(String str)
     {
-        str = str + STOP_CHAR1;
+        str = START_CHAR + str + STOP_CHAR1;
         try
         {
             outputStream = serialPort.getOutputStream();
