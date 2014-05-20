@@ -9,6 +9,8 @@ import java.util.TooManyListenersException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import DAO.*;
+import java.sql.SQLException;
+import model.ResultSetTableModel;
 
 /**
  *
@@ -72,16 +74,9 @@ public class ChargingServer
         boolean validateUIDResult;                 //result = Control if password matches pass string
         ChargingDAO chargingDAO = new ChargingDerbyDAO();
         String customerUID = chargingDAO.findByUID(cardUID).getUID();
-        if (cardUID.equals(customerUID))
-        {
-            validateUIDResult = true;
-        } else
-        {
-            validateUIDResult = false;
-        }
+        validateUIDResult= cardUID.equals(customerUID); //true-false
 
         validateUIDReturnPack(client, validateUIDResult);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     private void passcontrol(String input)
@@ -95,16 +90,9 @@ public class ChargingServer
         boolean passResult;                 //result = Control if password matches pass string
         ChargingDAO chargingDAO = new ChargingDerbyDAO();
         String customerPassword = chargingDAO.login(user);
-        if (typedPassword.equals(customerPassword))
-        {
-            passResult = true;
-        } else
-        {
-            passResult = false;
-        }
+        passResult = typedPassword.equals(customerPassword);
 
         loginReturnPack(client, taID, user, passResult);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void chargecharge(String input)
@@ -115,25 +103,23 @@ public class ChargingServer
         String kr = input.substring(19, 23);
         String øre = input.substring(23, 25);
         String time = input.substring(25, 29);
-        //træk kr/øre fra i brugerdatabase
-        //put opladning i event database
-
-
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ChargingDAO chargingDAO = new ChargingDerbyDAO();
+        double price = Double.parseDouble(kr+'.'+øre);
+        
+        chargingDAO.chargeEvent(taID, client, time, price);
     }
-
+    
+    
     private void clockquery(String input)
     {
         String client = input.substring(1, 4);
         clockPack(client);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void pricequery(String input)
     {
         String client = input.substring(1, 4);
         pricePack(client);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void clockBroadcast(int clientcount)
@@ -163,7 +149,7 @@ public class ChargingServer
     {
         String pack = '%' + client + "A" + result;
         tranciever.transmit(pack);
-        System.out.println("CS166. Validate UID return pack\n" + pack);
+        System.out.println("CS158. Validate UID return pack\n" + pack);
     }
 
     private void pricePack(String client)

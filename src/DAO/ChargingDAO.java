@@ -30,7 +30,7 @@ public interface ChargingDAO
             
     // From Charger to Server
     public String login(String costumerID); // Return password
-    public void chargeEvent(String taID, String costumerID, String stopTimeStamp, ResultSetTableModel receiver) throws java.sql.SQLException;
+    public void chargeEvent(String taID, String costumerID, String stopTimeStamp, double price);
     public double priceRequest(); // Return price
     public double balanceRequest(String costumerID); // Return balance
     // From Server to Charger

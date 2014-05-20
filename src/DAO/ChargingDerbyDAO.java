@@ -314,9 +314,10 @@ public class ChargingDerbyDAO implements ChargingDAO
     }
 
     @Override
-    public void chargeEvent(String taID, String costumerID, String stopTimeStamp, ResultSetTableModel receiver) throws java.sql.SQLException
+    public void chargeEvent(String taID, String costumerID, String stopTimeStamp, double price) throws java.sql.SQLException
     {
-        String sQLCommand = "INSERT INTO CHARGINGSTATS (TAID, stopped, UID) VALUES ('"+taID+"','"+stopTimeStamp+"','"+costumerID+"')";
+        String sQLCommand = "UPDATE CHARGINGSTATS SET stopped = "+stopTimeStamp+", UID = "+costumerID+", WHERE TAID = '"+taID+"'";
+
         try (Connection con = DerbyDAOFactory.createConnection();
             PreparedStatement stmt = con.prepareStatement(sQLCommand, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
         {
@@ -324,8 +325,21 @@ public class ChargingDerbyDAO implements ChargingDAO
             CachedRowSetImpl cachedRowSet = new CachedRowSetImpl();
             cachedRowSet.populate(resultSet);
             con.close();
-            receiver.setRowSet(cachedRowSet);
         }
+        
+        double newprice = balanceRequest(costumerID) - price; //Burde måske ikke foregå i DAO
+        sQLCommand = "UPDATE COSTUMERS SET BALANCE = "+newprice+", WHERE UID = '"+costumerID+"'";
+        try (Connection con = DerbyDAOFactory.createConnection();
+            PreparedStatement stmt = con.prepareStatement(sQLCommand, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
+        {
+            ResultSet resultSet = stmt.executeQuery();
+            CachedRowSetImpl cachedRowSet = new CachedRowSetImpl();
+            cachedRowSet.populate(resultSet);
+        }
+        catch (SQLException e){
+            System.out.print("SQL Fail!" + e.getMessage());
+        }
+          
     }
 
     @Override
