@@ -9,11 +9,9 @@ import java.util.TooManyListenersException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import DAO.*;
-import java.sql.Date;
-import java.sql.SQLException;
 import java.util.Calendar;
 import model.Customer;
-import model.ResultSetTableModel;
+
 
 /**
  *
@@ -22,6 +20,17 @@ import model.ResultSetTableModel;
 public class ChargingServer
 {
 
+    private final int START_CHAR = 1;
+    private final int CLIENT_ID = 3;
+    private final int COMMAND_CHAR = 1;
+    private final int DATA_START = 5;
+    private final int TAID = 8;
+    private final int COSTUMER_ID = 8;
+    private final int PASSWORD_MAX = 8;
+    private final int CHARGE_KR = 4;
+    private final int CHARGE_ØRE = 2;
+    private final int TIMESTAMP = 4;
+    
     Transceiver tranciever;
 
     public ChargingServer()
@@ -48,7 +57,7 @@ public class ChargingServer
         System.out.println("CS43. CommandInterp: " + input);
         if (input.startsWith("%") && input.endsWith("*"))
         {
-            String command = input.substring(4, 5);
+            String command = input.substring(START_CHAR+CLIENT_ID, START_CHAR+CLIENT_ID+COMMAND_CHAR);
             switch (command)
             {
                 case "V":
@@ -72,8 +81,8 @@ public class ChargingServer
 
     private void validateUIDcontrol(String input)
     {
-        String client = input.substring(1, 4);
-        String cardUID = input.substring(5, 13);
+        String client = input.substring(START_CHAR, START_CHAR+CLIENT_ID);
+        String cardUID = input.substring(DATA_START, DATA_START+COSTUMER_ID);
         boolean validateUIDResult;                 //result = Control if password matches pass string
         ChargingDAO chargingDAO = new ChargingDerbyDAO();
         String customerUID = chargingDAO.findByUID(cardUID).getUID();
@@ -87,9 +96,9 @@ public class ChargingServer
         int nextTAID = 0;
         String taID = String.valueOf(nextTAID);
         nextTAID++;
-        String client = input.substring(1, 4);
-        String user = input.substring(5, 13);
-        String typedPassword = input.substring(13, 21);
+        String client = input.substring(START_CHAR, START_CHAR+CLIENT_ID);
+        String user = input.substring(DATA_START, DATA_START+COSTUMER_ID);
+        String typedPassword = input.substring(DATA_START+COSTUMER_ID, DATA_START+COSTUMER_ID+PASSWORD_MAX);
         boolean passResult;                 //result = Control if password matches pass string
         ChargingDAO chargingDAO = new ChargingDerbyDAO();
         String customerPassword = chargingDAO.login(user);
@@ -103,28 +112,28 @@ public class ChargingServer
 
     private void chargecharge(String input)
     {
-        String client = input.substring(1, 4);
-        String taID = input.substring(5, 11);
-        String user = input.substring(11, 19);
-        String kr = input.substring(19, 23);
-        String øre = input.substring(23, 25);
-        String time = input.substring(25, 29);
+        String client = input.substring(START_CHAR, START_CHAR+CLIENT_ID);
+        String taID = input.substring(DATA_START, DATA_START+TAID);
+        String user = input.substring(DATA_START, DATA_START+COSTUMER_ID);
+        String kr = input.substring(DATA_START+COSTUMER_ID, DATA_START+COSTUMER_ID+CHARGE_KR);
+        String øre = input.substring(DATA_START+COSTUMER_ID+CHARGE_KR, DATA_START+COSTUMER_ID+CHARGE_KR+CHARGE_ØRE);
+        String time = input.substring(DATA_START+COSTUMER_ID+CHARGE_KR+CHARGE_ØRE, DATA_START+COSTUMER_ID+CHARGE_KR+CHARGE_ØRE+TIMESTAMP);
         ChargingDAO chargingDAO = new ChargingDerbyDAO();
         double price = Double.parseDouble(kr+'.'+øre);
         
-        chargingDAO.chargeEvent(taID, client, time, price);
+        chargingDAO.chargeEvent(taID, user, time, price);
     }
     
     
     private void clockquery(String input)
     {
-        String client = input.substring(1, 4);
+        String client = input.substring(START_CHAR, START_CHAR+CLIENT_ID);
         clockPack(client);
     }
 
     private void pricequery(String input)
     {
-        String client = input.substring(1, 4);
+        String client = input.substring(START_CHAR, START_CHAR+CLIENT_ID);
         pricePack(client);
     }
 
