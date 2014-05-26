@@ -21,6 +21,17 @@ public class Customer
     private String password = "1234";
     //private String tempPassword; // Nice to have
 
+    /**
+     *
+     * @param uID
+     * @param firstName
+     * @param lastName
+     * @param balance
+     * @param creditLimit
+     * @param email
+     * @param tlf
+     * @param password
+     */
     public Customer(String uID, String firstName, String lastName, double balance, double creditLimit, String email, String tlf, String password)
     {
         this.uID = uID;
@@ -123,36 +134,64 @@ public class Customer
         this.balance = balance;
     }
     
+    /**
+     *
+     * @return
+     */
     public double getBalance()
     {
         return balance;
     }
     
+    /**
+     *
+     * @param creditLimit
+     */
     public void setCreditLimit(double creditLimit)
     {
         this.creditLimit = creditLimit;
     }
     
+    /**
+     *
+     * @return
+     */
     public double getCreditLimit()
     {
         return creditLimit;
     }
 
+    /**
+     *
+     * @param tlf
+     */
     public void setTlf(String tlf)
     {
         this.tlf = tlf;
     }
     
+    /**
+     *
+     * @return
+     */
     public String getTlf()
     {
         return tlf;
     }
     
+    /**
+     *
+     * @param password
+     */
     public void setPassword(String password)
     {
         this.password = password;
     }
     
+    /**
+     *
+     * @return
+     */
     public String getPassword()
     {
         return password;

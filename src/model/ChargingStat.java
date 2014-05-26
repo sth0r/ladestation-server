@@ -16,6 +16,14 @@ public class ChargingStat
     private String duration; 
     private String uID;
     
+    /**
+     *
+     * @param taID
+     * @param started
+     * @param stopped
+     * @param duration
+     * @param uID
+     */
     public ChargingStat(String taID, String started, String stopped, String duration, String uID)
     {
         this.taID = taID;
