@@ -349,7 +349,7 @@ public class ChargingDerbyDAO implements ChargingDAO
     public Price priceRequestDB()
     {
         try (Connection con = DerbyDAOFactory.createConnection();
-            PreparedStatement stmt = con.prepareStatement("SELECT Price FROM PRICESES", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
+            PreparedStatement stmt = con.prepareStatement("SELECT PRICE FROM PRICESES", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
         {
             ResultSet resultSet = stmt.executeQuery();
             Price price = createPriceModel(resultSet);
@@ -357,6 +357,8 @@ public class ChargingDerbyDAO implements ChargingDAO
         } 
         catch (SQLException e)
         {
+            System.out.println("SQLException: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }

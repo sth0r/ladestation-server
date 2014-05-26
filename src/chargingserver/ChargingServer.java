@@ -26,18 +26,18 @@ public class ChargingServer
     private final int DATA_START = 5;
     private final int TAID = 8;
     private final int COSTUMER_ID = 8;
-    private final int PASSWORD_MAX = 8;
+    private final int PASSWORD_MAX = 4; //Maybe 8 later
     private final int CHARGE_KR = 4;
     private final int CHARGE_ØRE = 2;
-    private final int TIMESTAMP = 4;
-    
+    private final int TIMESTAMP = 5;
+    private String taID;
     Transceiver tranciever;
 
     public ChargingServer()
     {
         try
         {
-            this.tranciever = new Transceiver("COM7", this);
+            this.tranciever = new Transceiver("COM22", this);
         } catch (TooManyListenersException ex)
         {
             Logger.getLogger(ChargingServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -90,19 +90,18 @@ public class ChargingServer
 
         validateUIDReturnPack(client, validateUIDResult);
     }
-    
+    //%001LxxxUIDxxPASS
     private void passcontrol(String input)
     {
         int nextTAID = 0;
-        String taID = String.valueOf(nextTAID);
+        taID = String.valueOf(nextTAID);
         nextTAID++;
         String client = input.substring(START_CHAR, START_CHAR+CLIENT_ID);
         String user = input.substring(DATA_START, DATA_START+COSTUMER_ID);
-        String typedPassword = input.substring(DATA_START+COSTUMER_ID, DATA_START+COSTUMER_ID+PASSWORD_MAX);
-        boolean passResult;                 //result = Control if password matches pass string
+        String typedPassword = input.substring(DATA_START+COSTUMER_ID, DATA_START+COSTUMER_ID+PASSWORD_MAX);                
         ChargingDAO chargingDAO = new ChargingDerbyDAO();
         String customerPassword = chargingDAO.login(user);
-        passResult = typedPassword.equals(customerPassword);
+        boolean passResult = typedPassword.equals(customerPassword);//result = Control if password matches pass string
         
         Customer customer = chargingDAO.findByUID(client);
         boolean creditResult = (customer.getBalance()+customer.getCreditLimit())>0;
@@ -113,15 +112,16 @@ public class ChargingServer
     private void chargecharge(String input)
     {
         String client = input.substring(START_CHAR, START_CHAR+CLIENT_ID);
-        String taID = input.substring(DATA_START, DATA_START+TAID);
+        String taIDReceived = input.substring(DATA_START, DATA_START+TAID);
         String user = input.substring(DATA_START, DATA_START+COSTUMER_ID);
         String kr = input.substring(DATA_START+COSTUMER_ID, DATA_START+COSTUMER_ID+CHARGE_KR);
         String øre = input.substring(DATA_START+COSTUMER_ID+CHARGE_KR, DATA_START+COSTUMER_ID+CHARGE_KR+CHARGE_ØRE);
         String time = input.substring(DATA_START+COSTUMER_ID+CHARGE_KR+CHARGE_ØRE, DATA_START+COSTUMER_ID+CHARGE_KR+CHARGE_ØRE+TIMESTAMP);
         ChargingDAO chargingDAO = new ChargingDerbyDAO();
         double price = Double.parseDouble(kr+'.'+øre);
-        
-        chargingDAO.chargeEvent(taID, user, time, price);
+        boolean chargeResult = taID.equals(taIDReceived);
+        chargingDAO.chargeEvent(taIDReceived, user, time, price);
+        chargeReturnPack(client, chargeResult);
     }
     
     
@@ -165,6 +165,13 @@ public class ChargingServer
         String pack = client + "A" + result;
         tranciever.transmit(pack);
         System.out.println("CS158. Validate UID return pack\n" + pack);
+    }
+    
+    private void chargeReturnPack(String client, boolean result)
+    {
+        String pack = client + "A" + result;
+        tranciever.transmit(pack);
+        System.out.println("CS175. Charge return pack\n" + pack);
     }
 
     private void pricePack(String client)

@@ -19,9 +19,9 @@ CREATE TABLE "CUSTOMERS"
 CREATE TABLE "CHARGINGSTATS" 
 (
    "TAID" INT NOT NULL GENERATED ALWAYS AS IDENTITY,
-   "started" varchar (20) NOT NULL,
-   "stopped" varchar (20) NOT NULL,
-   "duration" varchar (20) NOT NULL,
+   "STARTED" varchar (20) NOT NULL,
+   "STOPPED" varchar (20) NOT NULL,
+   "DURATION" varchar (20) NOT NULL,
    "UID" varchar (20) NOT NULL,
    PRIMARY KEY ("TAID"),
    FOREIGN KEY ("UID") REFERENCES "CUSTOMERS" ("UID")
@@ -29,24 +29,24 @@ CREATE TABLE "CHARGINGSTATS"
 
 CREATE TABLE "PRICESES" 
 (
-   "Price" FLOAT (10) NOT NULL,
-   PRIMARY KEY ("Price")
+   "PRICE" FLOAT (10) NOT NULL,
+   PRIMARY KEY ("PRICE")
 );
 
 INSERT INTO "CUSTOMERS" ("UID","FIRSTNAME", "LASTNAME","BALANCE","CREDITLIMIT","EMAIL","TLF","PASSWORD")
 VALUES 
-   ('F561A25C','Harvey','Deitel','100','1000','Harvey@car.com','18771556','12345678'),
-   ('F561A212','Paul','Deitel','200','100','Paul@gmail.com','28771556','1234'), 
+   ('F561A25C','Harvey','Deitel','100','1000','Harvey@car.com','18771556','1234'),
+   ('7B503FD7','Paul','Deitel','200','100','Paul@gmail.com','28771556','1234'), 
    ('F561A789','Andrew','Goldberg','300','10','andrew@goldberg.com','38771556','1234'),
    ('F561A007','David','Choffnes','400','1','mr.choffins@yahoo.com','48771556','1234');
 
-INSERT INTO "CHARGINGSTATS" ("started","stopped","duration","UID")
+INSERT INTO "CHARGINGSTATS" ("STARTED","STOPPED","DURATION","UID")
 VALUES
    ('2014-03-25 14:55:33','2014-03-25 15:55:33','1','F561A25C'),
    ('2014-03-25 14:55:33','2014-03-26 15:55:33','24','F561A25C'),
    ('2014-03-25 14:55:33','2014-03-25 16:25:33','15','F561A25C');
 
-INSERT INTO "PRICESES" ("Price")
+INSERT INTO "PRICESES" ("PRICE")
 VALUES
    (0.47);
 
