@@ -63,8 +63,10 @@ public class ChargingDerbyDAO implements ChargingDAO
                 ChargingStat stats = createChargingStatsModel(resultSet);
                 return stats;
             }
-        } catch (SQLException e)
+        } 
+        catch (SQLException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
@@ -88,11 +90,12 @@ public class ChargingDerbyDAO implements ChargingDAO
             }
         } catch (SQLException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
     @Override
-    public void findByFirstNameTEST(String firstName, ResultSetTableModel receiver) throws java.sql.SQLException
+    public void findByFirstNameTEST(String firstName, ResultSetTableModel receiver)
     {
         String titlesQuery = "select *"
                 + "from \"CUSTOMERS\" "
@@ -107,6 +110,10 @@ public class ChargingDerbyDAO implements ChargingDAO
             cachedRowSet.populate(resultSet);
             con.close();
             receiver.setRowSet(cachedRowSet);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -128,8 +135,10 @@ public class ChargingDerbyDAO implements ChargingDAO
                 Customer user = createCostumerModel(resultSet);
                 return user;
             }
-        } catch (SQLException e)
+        }
+        catch (SQLException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
@@ -154,6 +163,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             }
         } catch (SQLException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
@@ -178,6 +188,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             }
         } catch (SQLException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
@@ -202,6 +213,7 @@ public class ChargingDerbyDAO implements ChargingDAO
             }
         } catch (SQLException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
@@ -226,11 +238,12 @@ public class ChargingDerbyDAO implements ChargingDAO
         } 
         catch (SQLException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
     @Override
-    public void addCustomerToDB(Customer customer, ResultSetTableModel receiver) throws java.sql.SQLException
+    public void addCustomerToDB(Customer customer, ResultSetTableModel receiver)
     {
         String sQLCommand = "INSERT INTO CUSTOMERS (UID,firstName,lastName,balance,creditLimit,email,tlf)"
                 + "VALUES ('"+customer.getUID()+"','"+customer.getFirstName()+"','"+customer.getLastName()+
@@ -245,9 +258,14 @@ public class ChargingDerbyDAO implements ChargingDAO
             con.close();
             receiver.setRowSet(cachedRowSet);
         }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }        
     }
+    
     @Override
-    public void editCustomerFromDB(String uID,ResultSetTableModel receiver) throws java.sql.SQLException
+    public void editCustomerFromDB(String uID,ResultSetTableModel receiver)
     {
         Customer editCustomer = findByUID(uID);
         String sQLCommand = "UPDATE CUSTOMERS SET firstName = "+editCustomer.getFirstName()+",lastName = "+editCustomer.getLastName()+
@@ -262,9 +280,13 @@ public class ChargingDerbyDAO implements ChargingDAO
             con.close();
             receiver.setRowSet(cachedRowSet);
         }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
     }
     @Override
-    public void deleteCustomerFromDB(String uID, ResultSetTableModel receiver) throws java.sql.SQLException
+    public void deleteCustomerFromDB(String uID, ResultSetTableModel receiver)
     {
         String sQLCommand = "DELETE FROM CUSTOMERS WHERE UID = '"+uID+"'";
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -276,9 +298,13 @@ public class ChargingDerbyDAO implements ChargingDAO
             con.close();
             receiver.setRowSet(cachedRowSet);
         }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
     }
     @Override
-    public void getCustomersTableFromDB(ResultSetTableModel receiver) throws java.sql.SQLException
+    public void getCustomersTableFromDB(ResultSetTableModel receiver)
     {    
         String sQLCommand = "SELECT UID,firstName,lastName,balance,creditLimit,email,tlf FROM CUSTOMERS"; // Avoid getting password colum
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -290,9 +316,13 @@ public class ChargingDerbyDAO implements ChargingDAO
             con.close();
             receiver.setRowSet(cachedRowSet);
         }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
     }
     @Override
-    public void getChargingstatsTableFromDB(ResultSetTableModel receiver) throws java.sql.SQLException
+    public void getChargingstatsTableFromDB(ResultSetTableModel receiver)
     {
         String sQLCommand = "SELECT * FROM CHARGINGSTATS";
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -303,6 +333,10 @@ public class ChargingDerbyDAO implements ChargingDAO
             cachedRowSet.populate(resultSet);
             con.close();
             receiver.setRowSet(cachedRowSet);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
         }
     }
     // From Charger to Server
@@ -349,14 +383,15 @@ public class ChargingDerbyDAO implements ChargingDAO
     public Price priceRequestDB()
     {
         try (Connection con = DerbyDAOFactory.createConnection();
-            PreparedStatement stmt = con.prepareStatement("SELECT Price FROM PRICESES", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
+            PreparedStatement stmt = con.prepareStatement("SELECT PRICE FROM PRICESES WHERE PLACE = 'Copenhagen'", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
         {
             ResultSet resultSet = stmt.executeQuery();
             Price price = createPriceModel(resultSet);
-            return price; 
+            return price;
         } 
         catch (SQLException e)
         {
+            e.printStackTrace();
         }
         return null;
     }
@@ -375,7 +410,7 @@ public class ChargingDerbyDAO implements ChargingDAO
     // From Server to Charger
 
     @Override
-    public void newTAID(String taID, String startTimeStamp, ResultSetTableModel receiver) throws java.sql.SQLException
+    public void newTAID(String taID, String startTimeStamp, ResultSetTableModel receiver)
     {
         String sQLCommand = "INSERT INTO CHARGINGSTATS (TAID, started) VALUES ('"+ taID +"','" +startTimeStamp+"')";
         try (Connection con = DerbyDAOFactory.createConnection();
@@ -386,6 +421,10 @@ public class ChargingDerbyDAO implements ChargingDAO
             cachedRowSet.populate(resultSet);
             con.close();
             receiver.setRowSet(cachedRowSet);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
         }
     }
     
@@ -414,7 +453,7 @@ public class ChargingDerbyDAO implements ChargingDAO
     
     private Price createPriceModel(ResultSet resultSet) throws SQLException
     {
-        double price = resultSet.getDouble("Price");
+        double price = resultSet.getDouble("PRICE");
         return new Price(price);
     }
 

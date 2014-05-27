@@ -31,6 +31,7 @@ public class ChargingServer
     private final int CHARGE_ØRE = 2;
     private final int TIMESTAMP = 5;
     private String taID;
+    private int nextTAID = 0;
     Transceiver tranciever;
 
     public ChargingServer()
@@ -58,6 +59,7 @@ public class ChargingServer
         if (input.startsWith("%") && input.endsWith("*"))
         {
             String command = input.substring(START_CHAR+CLIENT_ID, START_CHAR+CLIENT_ID+COMMAND_CHAR);
+            System.out.println("CS61. Switch command\n" + command);
             switch (command)
             {
                 case "V":
@@ -75,8 +77,13 @@ public class ChargingServer
                 case "Q":
                     pricequery(input);
                     break;
+                default :
+                    System.out.println("CS79. Switch case default ERROR\n" + command);
+                    break;
             }
+            //System.out.println("CS79. Switch command\n" + command);
         }
+        else System.out.println("CS63. Wrong interpretation\n");
     }
 
     private void validateUIDcontrol(String input)
@@ -93,8 +100,9 @@ public class ChargingServer
     //%001LxxxUIDxxPASS
     private void passcontrol(String input)
     {
-        int nextTAID = 0;
-        taID = String.valueOf(nextTAID);
+        //pricePack(String.format("%03d", i));
+        //taID = String.valueOf(nextTAID);
+        taID = String.format("%08d",nextTAID);
         nextTAID++;
         String client = input.substring(START_CHAR, START_CHAR+CLIENT_ID);
         String user = input.substring(DATA_START, DATA_START+COSTUMER_ID);
@@ -104,8 +112,11 @@ public class ChargingServer
         boolean passResult = typedPassword.equals(customerPassword);//result = Control if password matches pass string
         
         Customer customer = chargingDAO.findByUID(client);
-        boolean creditResult = (customer.getBalance()+customer.getCreditLimit())>0;
-
+        boolean creditResult = true; 
+        //if (customer.getBalance()+customer.getCreditLimit() > 0) creditResult = true;
+        //else creditResult = false;
+        System.out.println("CS108. Login typed password\n" + typedPassword);
+        System.out.println("CS108. Login return pass result\n" + passResult);
         loginReturnPack(client, taID, user, passResult, creditResult);
     }
 

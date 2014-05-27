@@ -13,6 +13,6 @@ public class Main
     public static void main(String[] args)
     {
         ChargingServer newServer = new ChargingServer();
-        newServer.priceBroadcast(1);
+        //newServer.priceBroadcast(1);
     }
 }
